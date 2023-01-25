@@ -9,5 +9,5 @@ docker run -it \
     --host=pgdatabase \
     --port=5432 \
     --db_name=ny_taxi \
-    --table_name=zones \
+    --table_name=green_taxi_data \
     --csv_url_base=${CSV_URL_BASE}

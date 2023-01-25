@@ -29,8 +29,8 @@ def main(params):
                     'green_taxi_data': 'green_tripdata_2019-01.csv',
                     'zones': 'taxi_zone_lookup.csv'}
 
-    print('Start downloading csv data...')
-    os.system(f'wget {csv_url_base+csv_names[table_name]}')
+    #print('Start downloading csv data...')
+    #os.system(f'wget {csv_url_base+csv_names[table_name]}')
 
     #print('Done! Now unpacking .gz file...')
     #os.system(f'gzip {csv_gz_name}')
