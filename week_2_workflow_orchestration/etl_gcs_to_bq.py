@@ -19,9 +19,9 @@ def extract_from_gcs(color: str, year: int, month: int) -> Path:
 def transform_data(path: Path) -> pd.DataFrame:
     """Cleaning data"""
     df = pd.read_parquet(path)
-    print(f"Pre: missing passenger count: {df['passenger_count'].isna().sum()}")
-    df['passenger_count'].fillna(0, inplace=True)
-    print(f"Post: missing passenger count: {df['passenger_count'].isna().sum()}")
+    # print(f"Pre: missing passenger count: {df['passenger_count'].isna().sum()}")
+    # df['passenger_count'].fillna(0, inplace=True)
+    # print(f"Post: missing passenger count: {df['passenger_count'].isna().sum()}")
     return df
 
 @task(log_prints=True)
@@ -29,7 +29,7 @@ def write_to_bq(df: pd.DataFrame) -> None:
     """Write DataFrame to Big Query"""
     gcp_credentials_block = GcpCredentials.load("zoomcamp-gcp-credentials")
     df.to_gbq(
-        destination_table='trips_data_all.yellow_taxi_data',
+        destination_table='trips_data_all.week2_hw_table',
         project_id='splendid-skill-375614',
         credentials=gcp_credentials_block.get_credentials_from_service_account(),
         chunksize=500_000,
@@ -37,15 +37,19 @@ def write_to_bq(df: pd.DataFrame) -> None:
     )
 
 @flow(name="Data from GCS to GBQ")
-def etl_gcs_to_bq() -> None:
+def etl_gcs_to_bq(color, year, months) -> None:
     """Main ETL flow for loading data form GCS bucket to Big Query"""
-    color = 'yellow'
-    year = 2021
-    month = 1
+    #color = 'yellow'
+    #year = 2021
+    #month = 1
 
-    path = extract_from_gcs(color, year, month)
-    df = transform_data(path)
-    write_to_bq(df)
+    for month in months:
+        path = extract_from_gcs(color, year, month)
+        df = transform_data(path)
+        write_to_bq(df)
 
 if __name__ == '__main__':
+    color = 'yellow'
+    months = [1, 2, 3]
+    year = 2021
     etl_gcs_to_bq()

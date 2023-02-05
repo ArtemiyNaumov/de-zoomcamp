@@ -11,7 +11,8 @@ from datetime import timedelta
 
 
 
-@task(log_prints=True, retries=3, cache_key_fn=task_input_hash, cache_expiration=timedelta(days=1))
+#@task(log_prints=True, retries=3, cache_key_fn=task_input_hash, cache_expiration=timedelta(seconds=5))
+@task(log_prints=True, retries=3)
 def fetch_data(url: str) -> pd.DataFrame:
     """Read taxi data from web into pandas dataframe"""
 

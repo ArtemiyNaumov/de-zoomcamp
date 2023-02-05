@@ -15,10 +15,14 @@ def fetch_data(url: str) -> pd.DataFrame:
     return df
 
 @task(log_prints=True)
-def process_data(df: pd.DataFrame) -> pd.DataFrame:
+def process_data(df: pd.DataFrame, color: str) -> pd.DataFrame:
     """Fix dtype issues"""
-    df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
-    df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
+    if color == 'yellow':
+        df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
+        df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
+    elif color == 'green':
+        df.lpep_dropoff_datetime = pd.to_datetime(df.lpep_dropoff_datetime)
+        df.lpep_pickup_datetime = pd.to_datetime(df.lpep_pickup_datetime)
     print(f'columns: {df.dtypes}')
     print(f'shape: {df.shape}')
     return df
@@ -45,13 +49,13 @@ def write_to_gcs(path: Path) -> None:
 def etl_web_to_gcs() -> None:
     """The main ETL func"""
     color = 'yellow'
-    year = 2021
-    month = 1
+    year = 2019
+    month = 3
     dataset_file = f'{color}_tripdata_{year}-{month:02}'
     dataset_url = f'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/{color}/{dataset_file}.csv.gz'
 
     df = fetch_data(dataset_url)
-    df_clean = process_data(df)
+    df_clean = process_data(df, color)
     path = write_local(df_clean, color, dataset_file)
     write_to_gcs(path)
 
