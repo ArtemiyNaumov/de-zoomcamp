@@ -48,7 +48,7 @@ def write_to_gcs(path: Path) -> None:
 @flow(name="Web to GCS")
 def etl_web_to_gcs() -> None:
     """The main ETL func"""
-    color = 'yellow'
+    color = 'green'
     year = 2020
     month = 11
     dataset_file = f'{color}_tripdata_{year}-{month:02}'
